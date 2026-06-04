@@ -1,0 +1,91 @@
+{
+  "source_version": 3,
+  "remove_ipv6": true,
+  "merge_ipv4": true,
+  "drop_covered_ipv4": true,
+  "prefer_shortest_suffix": true,
+  "ads_priority_over_cn": true,
+  "compile_srs": true,
+  "keep_json": true,
+  "sing_box_binary": "sing-box",
+  "out_dir": "out",
+  "tmp_dir": "tmp",
+  "http_timeout_sec": 180,
+  "download_retries": 3,
+  "download_concurrency": 6,
+  "cn_ip": [
+    {
+      "tag": "geoip-cn",
+      "type": "remote",
+      "format": "binary",
+      "url": "https://fastly.jsdelivr.net/gh/SagerNet/sing-geoip@rule-set/geoip-cn.srs"
+    },
+    {
+      "tag": "GeoIP-APNIC-CN-IPv4",
+      "type": "remote",
+      "format": "binary",
+      "url": "https://fastly.jsdelivr.net/gh/Dreista/sing-box-rule-set-cn@rule-set/apnic-cn-ipv4.srs"
+    },
+    {
+      "tag": "GeoIP-MaxMind-CN-IPv4",
+      "type": "remote",
+      "format": "binary",
+      "url": "https://fastly.jsdelivr.net/gh/Dreista/sing-box-rule-set-cn@rule-set/maxmind-cn-ipv4.srs"
+    },
+    {
+      "tag": "GeoIP-IPinfo-Lite-CN-IPv4",
+      "type": "remote",
+      "format": "binary",
+      "url": "https://fastly.jsdelivr.net/gh/Dreista/sing-box-rule-set-cn@rule-set/ipinfo-lite-cn-ipv4.srs"
+    },
+    {
+      "tag": "GeoIP-ChnRoutes2-CN-IPv4",
+      "type": "remote",
+      "format": "binary",
+      "url": "https://fastly.jsdelivr.net/gh/Dreista/sing-box-rule-set-cn@rule-set/chnroutes.txt.srs"
+    }
+  ],
+  "cn_site": [
+    {
+      "tag": "geosite-cn",
+      "type": "remote",
+      "format": "binary",
+      "url": "https://fastly.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-cn.srs"
+    },
+    {
+      "tag": "geosite-microsoft@cn",
+      "type": "remote",
+      "format": "binary",
+      "url": "https://fastly.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-microsoft%40cn.srs"
+    }
+  ],
+  "ads": [
+    {
+      "tag": "geosite-category-ads-all",
+      "type": "remote",
+      "format": "binary",
+      "url": "https://fastly.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-category-ads-all.srs"
+    },
+    {
+      "tag": "AdGuard-Filter-1",
+      "type": "remote",
+      "kind": "adguard",
+      "format": "text",
+      "url": "https://fastly.jsdelivr.net/gh/AdguardTeam/HostlistsRegistry@main/assets/filter_1.txt"
+    },
+    {
+      "tag": "AdRules-DNS",
+      "type": "remote",
+      "kind": "adguard",
+      "format": "text",
+      "url": "https://adrules.top/dns.txt"
+    },
+    {
+      "tag": "217heidai-DNS",
+      "type": "remote",
+      "kind": "adguard",
+      "format": "text",
+      "url": "https://fastly.jsdelivr.net/gh/217heidai/adblockfilters@main/rules/adblockdns.txt"
+    }
+  ]
+}

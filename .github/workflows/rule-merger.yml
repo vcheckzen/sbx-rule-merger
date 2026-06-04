@@ -1,0 +1,77 @@
+name: Rule Merger & Update
+
+on:
+  # 允许手动触发
+  workflow_dispatch:
+  # 定时触发（可选，比如每天凌晨 4 点运行，如果不需要可以删掉这三行）
+  schedule:
+    - cron: '0 4 * * *'
+  # 当 main 分支的 config.json 发生变动时触发
+  push:
+    branches:
+      - main
+    paths:
+      - 'config.json'
+
+# 确保有权限将变更推送回仓库
+permissions:
+  contents: write
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 拉取仓库代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. 设置 Go 环境并配置缓存
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable' # 自动使用最新的稳定版 Go
+          cache-dependency-path: '**/go.sum'
+
+      # 3. 下载并安装最新的稳定版 sing-box 
+      - name: Install latest sing-box
+        run: |
+          # 从 GitHub Release 获取最新版本号并下载 Linux amd64 压缩包
+          LATEST_TAG=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+          # 去掉版本号前面的 'v'
+          VERSION=${LATEST_TAG#v}
+          echo "Downloading sing-box version $VERSION..."
+          
+          curl -Lo sing-box.tar.gz "https://github.com/SagerNet/sing-box/releases/download/${LATEST_TAG}/sing-box-${VERSION}-linux-amd64.tar.gz"
+          tar -xzf sing-box.tar.gz
+          
+          # 将解压后的二进制文件移动到系统 PATH 中并赋予执行权限
+          sudo mv "sing-box-${VERSION}-linux-amd64/sing-box" /usr/local/bin/
+          rm -rf sing-box.tar.gz "sing-box-${VERSION}-linux-amd64"
+          
+          # 验证安装
+          sing-box version
+
+      # 4. 编译并运行你的 rule-merger
+      - name: Build and run rule-merger
+        run: |
+          go build -ldflags="-s -w" ./cmd/rule-merger
+          ./rule-merger -config config.json
+          rm -f ./rule-merger
+
+      # 5. 检查变更并自动推送到仓库
+      - name: Commit and Push changes
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # 暂存所有变更（特别是 out_dir 目录下的规则文件）
+          git add .
+          
+          # 只有在有文件变更时才进行 commit 和 push，防止 workflow 报错
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: auto update merged rules [skip ci]"
+            git push
+          else
+            echo "No changes detected. Skipping push."
+          fi
