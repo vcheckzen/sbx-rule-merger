@@ -67,11 +67,18 @@
       "url": "https://fastly.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-category-ads-all.srs"
     },
     {
-      "tag": "AdGuard-Filter-1",
+      "tag": "AdGuard DNS filter",
       "type": "remote",
       "kind": "adguard",
       "format": "text",
       "url": "https://fastly.jsdelivr.net/gh/AdguardTeam/HostlistsRegistry@main/assets/filter_1.txt"
+    },
+    {
+      "tag": "AdAway Default Blocklist",
+      "type": "remote",
+      "kind": "adguard",
+      "format": "text",
+      "url": "https://fastly.jsdelivr.net/gh/AdguardTeam/HostlistsRegistry/assets/filter_2.txt"
     },
     {
       "tag": "AdRules-DNS",
